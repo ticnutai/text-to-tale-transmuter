@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FileText, Building2, Home, ChevronLeft } from "lucide-react";
+import LogoDisplay from "./LogoDisplay";
 
 interface ContractCardProps {
   title: string;
@@ -8,6 +9,10 @@ interface ContractCardProps {
   icon: "building" | "home" | "document";
   onClick: () => void;
   delay?: number;
+  logo?: string | null;
+  companyName?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 const iconMap = {
@@ -16,8 +21,27 @@ const iconMap = {
   document: FileText,
 };
 
-const ContractCard = ({ title, subtitle, price, icon, onClick, delay = 0 }: ContractCardProps) => {
+const ContractCard = ({ 
+  title, 
+  subtitle, 
+  price, 
+  icon, 
+  onClick, 
+  delay = 0,
+  logo,
+  companyName = "",
+  primaryColor,
+  secondaryColor,
+}: ContractCardProps) => {
   const Icon = iconMap[icon];
+  
+  const gradientStyle = primaryColor && secondaryColor 
+    ? { background: `linear-gradient(to bottom right, hsl(${primaryColor} / 0.2), transparent)` }
+    : undefined;
+
+  const iconGradientStyle = primaryColor && secondaryColor
+    ? { background: `linear-gradient(to bottom right, hsl(${primaryColor}), hsl(${secondaryColor}))` }
+    : undefined;
   
   return (
     <motion.div
@@ -30,13 +54,23 @@ const ContractCard = ({ title, subtitle, price, icon, onClick, delay = 0 }: Cont
     >
       <div className="relative bg-card rounded-2xl p-8 shadow-lg border border-border/50 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-gold/30">
         {/* Decorative corner */}
-        <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-gold/20 to-transparent rounded-br-full" />
+        <div 
+          className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-gold/20 to-transparent rounded-br-full"
+          style={gradientStyle}
+        />
         
-        {/* Icon */}
-        <div className="relative mb-6">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-            <Icon className="w-8 h-8 text-white" />
-          </div>
+        {/* Logo / Icon */}
+        <div className="relative mb-6 flex items-center justify-between" dir="rtl">
+          {logo || companyName ? (
+            <LogoDisplay logo={logo} companyName={companyName} size="md" />
+          ) : (
+            <div 
+              className="w-16 h-16 rounded-xl bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"
+              style={iconGradientStyle}
+            >
+              <Icon className="w-8 h-8 text-white" />
+            </div>
+          )}
         </div>
         
         {/* Content */}
@@ -52,7 +86,10 @@ const ContractCard = ({ title, subtitle, price, icon, onClick, delay = 0 }: Cont
         {/* Price */}
         <div className="relative mt-6 pt-6 border-t border-border/50" dir="rtl">
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-gold-dark">
+            <span 
+              className="text-2xl font-bold text-gold-dark"
+              style={secondaryColor ? { color: `hsl(${secondaryColor})` } : undefined}
+            >
               {price}
             </span>
             <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-gold transition-colors duration-300">
@@ -63,7 +100,10 @@ const ContractCard = ({ title, subtitle, price, icon, onClick, delay = 0 }: Cont
         </div>
         
         {/* Hover glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={gradientStyle ? { ...gradientStyle, opacity: 0 } : undefined}
+        />
       </div>
     </motion.div>
   );

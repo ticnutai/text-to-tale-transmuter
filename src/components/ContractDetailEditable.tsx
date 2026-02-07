@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, Calendar, CreditCard, FileText, AlertCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditableText from "./EditableText";
+import LogoDisplay from "./LogoDisplay";
 import { ContractData } from "@/hooks/useContractsData";
 
 interface ContractDetailEditableProps {
@@ -13,6 +14,11 @@ interface ContractDetailEditableProps {
   onUpdateField: (field: keyof ContractData, value: string) => void;
   onUpdateSectionItem: (sectionIndex: number, itemIndex: number, value: string) => void;
   onUpdateNote: (noteIndex: number, value: string) => void;
+  logo?: string | null;
+  companyName?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  fontFamily?: string;
 }
 
 const ContractDetailEditable = ({
@@ -23,7 +29,18 @@ const ContractDetailEditable = ({
   onUpdateField,
   onUpdateSectionItem,
   onUpdateNote,
+  logo,
+  companyName = "",
+  primaryColor,
+  secondaryColor,
+  fontFamily,
 }: ContractDetailEditableProps) => {
+  const headerStyle = primaryColor && secondaryColor
+    ? { background: `linear-gradient(to left, hsl(${secondaryColor}), hsl(${primaryColor}))` }
+    : undefined;
+
+  const fontStyle = fontFamily ? { fontFamily } : undefined;
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -44,25 +61,40 @@ const ContractDetailEditable = ({
             exit={{ opacity: 0, x: 100 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed left-0 top-0 bottom-0 w-full max-w-3xl bg-background z-50 overflow-hidden shadow-2xl"
+            style={fontStyle}
           >
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-l from-gold-dark to-gold p-6 text-white z-10">
+            <div 
+              className="sticky top-0 bg-gradient-to-l from-gold-dark to-gold p-6 text-white z-10"
+              style={headerStyle}
+            >
               <div className="flex items-start justify-between" dir="rtl">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">
-                    <EditableText
-                      value={contract.title}
-                      onChange={(v) => onUpdateField("title", v)}
-                      isEditMode={isEditMode}
+                <div className="flex items-start gap-4">
+                  {/* Logo */}
+                  {(logo || companyName) && (
+                    <LogoDisplay 
+                      logo={logo} 
+                      companyName={companyName} 
+                      size="md" 
+                      className="bg-white/20 backdrop-blur-sm"
                     />
-                  </h2>
-                  <p className="text-white/80 text-sm">
-                    <EditableText
-                      value={contract.location}
-                      onChange={(v) => onUpdateField("location", v)}
-                      isEditMode={isEditMode}
-                    />
-                  </p>
+                  )}
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">
+                      <EditableText
+                        value={contract.title}
+                        onChange={(v) => onUpdateField("title", v)}
+                        isEditMode={isEditMode}
+                      />
+                    </h2>
+                    <p className="text-white/80 text-sm">
+                      <EditableText
+                        value={contract.location}
+                        onChange={(v) => onUpdateField("location", v)}
+                        isEditMode={isEditMode}
+                      />
+                    </p>
+                  </div>
                 </div>
                 <button
                   onClick={onClose}

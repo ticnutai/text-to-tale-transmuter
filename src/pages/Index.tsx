@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, PencilOff } from "lucide-react";
+import { Pencil, PencilOff, Palette } from "lucide-react";
 import Header from "@/components/Header";
 import ContractCard from "@/components/ContractCard";
 import ContractDetailEditable from "@/components/ContractDetailEditable";
+import BrandingCustomizer from "@/components/BrandingCustomizer";
 import { useContractsData, ContractData } from "@/hooks/useContractsData";
+import { useBranding } from "@/hooks/useBranding";
 import { Button } from "@/components/ui/button";
 
 type ContractType = "addition" | "expansion" | "licensing" | null;
@@ -29,6 +31,7 @@ const cardInfo = {
 
 const Index = () => {
   const [selectedContract, setSelectedContract] = useState<ContractType>(null);
+  const [isBrandingOpen, setIsBrandingOpen] = useState(false);
   const {
     contractsData,
     isEditMode,
@@ -37,13 +40,23 @@ const Index = () => {
     updateSectionItem,
     updateNote,
   } = useContractsData();
+  const { branding, updateBranding } = useBranding();
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
       {/* Edit Mode Toggle */}
-      <div className="fixed bottom-6 left-6 z-40">
+      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2">
+        <Button
+          onClick={() => setIsBrandingOpen(true)}
+          variant="outline"
+          size="lg"
+          className="shadow-lg gap-2"
+        >
+          <Palette className="w-4 h-4" />
+          התאמה אישית
+        </Button>
         <Button
           onClick={() => setIsEditMode(!isEditMode)}
           variant={isEditMode ? "default" : "outline"}
@@ -105,6 +118,10 @@ const Index = () => {
               icon={cardInfo[type].icon}
               onClick={() => setSelectedContract(type)}
               delay={0.1 * (index + 1)}
+              logo={branding.logo}
+              companyName={branding.companyName}
+              primaryColor={branding.primaryColor}
+              secondaryColor={branding.secondaryColor}
             />
           ))}
         </div>
@@ -151,8 +168,21 @@ const Index = () => {
             updateSectionItem(selectedContract, sectionIndex, itemIndex, value)
           }
           onUpdateNote={(noteIndex, value) => updateNote(selectedContract, noteIndex, value)}
+          logo={branding.logo}
+          companyName={branding.companyName}
+          primaryColor={branding.primaryColor}
+          secondaryColor={branding.secondaryColor}
+          fontFamily={branding.fontFamily}
         />
       )}
+
+      {/* Branding Customizer Modal */}
+      <BrandingCustomizer
+        isOpen={isBrandingOpen}
+        onClose={() => setIsBrandingOpen(false)}
+        settings={branding}
+        onSave={updateBranding}
+      />
     </div>
   );
 };
