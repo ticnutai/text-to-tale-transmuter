@@ -14,6 +14,11 @@ export interface ContractData {
   title: string;
   location: string;
   price: string;
+  clientName: string;
+  clientAddress: string;
+  quoteNumber: string;
+  quoteDate: string;
+  projectImages: string[];
   sections: Section[];
   payments: PaymentStep[];
   timeline?: string[];
@@ -31,6 +36,11 @@ const initialContractsData: ContractsData = {
     title: "הצעת מחיר לתוספת בניה",
     location: "גוש 6273, חלקה 27, מגרש 921 - כפר חב\"ד",
     price: "₪35,000",
+    clientName: "שם הלקוח",
+    clientAddress: "כתובת הלקוח",
+    quoteNumber: "QT-001",
+    quoteDate: new Date().toLocaleDateString("he-IL"),
+    projectImages: [],
     sections: [
       {
         title: "שלב ראשון - בדיקת היתכנות ותכנון",
@@ -101,6 +111,11 @@ const initialContractsData: ContractsData = {
     title: "הצעת מחיר להרחבה צפונית",
     location: "גוש 7311, חלקה A, מגרש B - כפר חב\"ד (הרחבה צפונית)",
     price: "₪37,000",
+    clientName: "שם הלקוח",
+    clientAddress: "כתובת הלקוח",
+    quoteNumber: "QT-002",
+    quoteDate: new Date().toLocaleDateString("he-IL"),
+    projectImages: [],
     sections: [
       {
         title: "שלב ראשון - בדיקת היתכנות ותכנון",
@@ -170,6 +185,11 @@ const initialContractsData: ContractsData = {
     title: "הצעת מחיר לרישוי בלבד",
     location: "גוש 7188, חלקה 50, מגרש 166 - כפר חב\"ד",
     price: "₪30,000",
+    clientName: "שם הלקוח",
+    clientAddress: "כתובת הלקוח",
+    quoteNumber: "QT-003",
+    quoteDate: new Date().toLocaleDateString("he-IL"),
+    projectImages: [],
     sections: [
       {
         title: "שלב ראשון - רישוי",

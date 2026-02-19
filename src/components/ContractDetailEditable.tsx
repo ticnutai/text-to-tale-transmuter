@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import EditableText from "./EditableText";
 import LogoDisplay from "./LogoDisplay";
 import ShareActions from "./ShareActions";
+import ClientInfoBar from "./ClientInfoBar";
+import ProjectGallery from "./ProjectGallery";
 import { ContractData } from "@/hooks/useContractsData";
 
 interface ContractDetailEditableProps {
@@ -126,6 +128,24 @@ const ContractDetailEditable = ({
             
             {/* Content */}
             <div className="overflow-y-auto h-[calc(100vh-200px)] p-6" dir="rtl">
+              {/* Client Info */}
+              <ClientInfoBar
+                info={{
+                  clientName: contract.clientName,
+                  clientAddress: contract.clientAddress,
+                  quoteNumber: contract.quoteNumber,
+                  quoteDate: contract.quoteDate,
+                }}
+                isEditMode={isEditMode}
+                onUpdate={(field, value) => onUpdateField(field as keyof ContractData, value)}
+              />
+
+              {/* Project Gallery */}
+              <ProjectGallery
+                images={contract.projectImages}
+                isEditMode={isEditMode}
+              />
+
               {/* Sections */}
               {contract.sections.map((section, sectionIndex) => (
                 <motion.div
