@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check, Calendar, CreditCard, FileText, AlertCircle, ArrowRight } from "lucide-react";
+import { X, Check, Calendar, CreditCard, FileText, AlertCircle, ArrowRight, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditableText from "./EditableText";
 import LogoDisplay from "./LogoDisplay";
+import ShareActions from "./ShareActions";
 import { ContractData } from "@/hooks/useContractsData";
 
 interface ContractDetailEditableProps {
@@ -14,6 +15,10 @@ interface ContractDetailEditableProps {
   onUpdateField: (field: keyof ContractData, value: string) => void;
   onUpdateSectionItem: (sectionIndex: number, itemIndex: number, value: string) => void;
   onUpdateNote: (noteIndex: number, value: string) => void;
+  onAddSectionItem?: (sectionIndex: number, value: string) => void;
+  onRemoveSectionItem?: (sectionIndex: number, itemIndex: number) => void;
+  onAddNote?: (value: string) => void;
+  onRemoveNote?: (noteIndex: number) => void;
   logo?: string | null;
   companyName?: string;
   primaryColor?: string;
@@ -29,6 +34,10 @@ const ContractDetailEditable = ({
   onUpdateField,
   onUpdateSectionItem,
   onUpdateNote,
+  onAddSectionItem,
+  onRemoveSectionItem,
+  onAddNote,
+  onRemoveNote,
   logo,
   companyName = "",
   primaryColor,
@@ -134,17 +143,35 @@ const ContractDetailEditable = ({
                   </div>
                   <div className="space-y-3 pr-11">
                     {section.items.map((item, itemIndex) => (
-                      <div key={itemIndex} className="flex items-start gap-3">
+                      <div key={itemIndex} className="flex items-start gap-3 group/item">
                         <Check className="w-4 h-4 text-gold mt-1 flex-shrink-0" />
-                        <span className="text-muted-foreground text-sm leading-relaxed">
+                        <span className="text-muted-foreground text-sm leading-relaxed flex-1">
                           <EditableText
                             value={item}
                             onChange={(v) => onUpdateSectionItem(sectionIndex, itemIndex, v)}
                             isEditMode={isEditMode}
                           />
                         </span>
+                        {isEditMode && onRemoveSectionItem && (
+                          <button
+                            onClick={() => onRemoveSectionItem(sectionIndex, itemIndex)}
+                            className="opacity-0 group-hover/item:opacity-100 p-1 rounded hover:bg-destructive/10 text-destructive transition-all"
+                            title="מחק סעיף"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     ))}
+                    {isEditMode && onAddSectionItem && (
+                      <button
+                        onClick={() => onAddSectionItem(sectionIndex, "סעיף חדש")}
+                        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-gold transition-colors pr-7"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        הוסף סעיף
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -214,26 +241,47 @@ const ContractDetailEditable = ({
                 </div>
                 <div className="space-y-3 pr-11">
                   {contract.notes.map((note, index) => (
-                    <div key={index} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
+                    <div key={index} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3 group/note">
                       <ArrowRight className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
-                      <span className="text-muted-foreground text-sm leading-relaxed">
+                      <span className="text-muted-foreground text-sm leading-relaxed flex-1">
                         <EditableText
                           value={note}
                           onChange={(v) => onUpdateNote(index, v)}
                           isEditMode={isEditMode}
                         />
                       </span>
+                      {isEditMode && onRemoveNote && (
+                        <button
+                          onClick={() => onRemoveNote(index)}
+                          className="opacity-0 group-hover/note:opacity-100 p-1 rounded hover:bg-destructive/10 text-destructive transition-all"
+                          title="מחק הערה"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   ))}
+                  {isEditMode && onAddNote && (
+                    <button
+                      onClick={() => onAddNote("הערה חדשה")}
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-gold transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      הוסף הערה
+                    </button>
+                  )}
                 </div>
               </motion.div>
             </div>
             
             {/* Footer */}
-            <div className="sticky bottom-0 bg-background border-t border-border p-4" dir="rtl">
+            <div className="sticky bottom-0 bg-background border-t border-border p-4 print:hidden" dir="rtl">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  תוקף הצעת המחיר: 30 יום
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-muted-foreground">
+                    תוקף הצעת המחיר: 30 יום
+                  </div>
+                  <ShareActions contract={contract} companyName={companyName} />
                 </div>
                 <Button 
                   onClick={onClose}

@@ -39,6 +39,10 @@ const Index = () => {
     updateContract,
     updateSectionItem,
     updateNote,
+    addSectionItem,
+    removeSectionItem,
+    addNote,
+    removeNote,
   } = useContractsData();
   const { branding, updateBranding } = useBranding();
 
@@ -168,6 +172,10 @@ const Index = () => {
             updateSectionItem(selectedContract, sectionIndex, itemIndex, value)
           }
           onUpdateNote={(noteIndex, value) => updateNote(selectedContract, noteIndex, value)}
+          onAddSectionItem={(sectionIndex, value) => addSectionItem(selectedContract, sectionIndex, value)}
+          onRemoveSectionItem={(sectionIndex, itemIndex) => removeSectionItem(selectedContract, sectionIndex, itemIndex)}
+          onAddNote={(value) => addNote(selectedContract, value)}
+          onRemoveNote={(noteIndex) => removeNote(selectedContract, noteIndex)}
           logo={branding.logo}
           companyName={branding.companyName}
           primaryColor={branding.primaryColor}
