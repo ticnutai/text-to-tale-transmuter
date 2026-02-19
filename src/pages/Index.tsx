@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, PencilOff, Palette, Layout } from "lucide-react";
+import { Pencil, PencilOff, Palette, Layout, Copy, BarChart3 } from "lucide-react";
 import Header from "@/components/Header";
 import ContractCard from "@/components/ContractCard";
 import ContractDetailEditable from "@/components/ContractDetailEditable";
 import BrandingCustomizer from "@/components/BrandingCustomizer";
 import TemplateSelector from "@/components/TemplateSelector";
-import { useContractsData, ContractData } from "@/hooks/useContractsData";
+import CompareQuotes from "@/components/CompareQuotes";
+import StatusBadge from "@/components/StatusBadge";
+import QuoteFrame from "@/components/QuoteFrame";
+import { useContractsData, ContractData, QuoteStatus } from "@/hooks/useContractsData";
 import { useBranding, BrandingSettings } from "@/hooks/useBranding";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 type ContractType = "addition" | "expansion" | "licensing" | null;
 
@@ -34,6 +38,8 @@ const Index = () => {
   const [selectedContract, setSelectedContract] = useState<ContractType>(null);
   const [isBrandingOpen, setIsBrandingOpen] = useState(false);
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const { toast } = useToast();
   const {
     contractsData,
     isEditMode,
@@ -54,6 +60,15 @@ const Index = () => {
       
       {/* Edit Mode Toggle */}
       <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2">
+        <Button
+          onClick={() => setIsCompareOpen(true)}
+          variant="outline"
+          size="lg"
+          className="shadow-lg gap-2"
+        >
+          <BarChart3 className="w-4 h-4" />
+          השוואה
+        </Button>
         <Button
           onClick={() => setIsTemplatesOpen(true)}
           variant="outline"
@@ -125,19 +140,29 @@ const Index = () => {
         {/* Contract Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {(Object.keys(cardInfo) as Array<keyof typeof cardInfo>).map((type, index) => (
-            <ContractCard
-              key={type}
-              title={cardInfo[type].title}
-              subtitle={cardInfo[type].subtitle}
-              price={contractsData[type].price}
-              icon={cardInfo[type].icon}
-              onClick={() => setSelectedContract(type)}
-              delay={0.1 * (index + 1)}
-              logo={branding.logo}
-              companyName={branding.companyName}
-              primaryColor={branding.primaryColor}
-              secondaryColor={branding.secondaryColor}
-            />
+            <div key={type} className="relative">
+              <div className="absolute top-3 right-3 z-10">
+                <StatusBadge
+                  status={contractsData[type].status}
+                  isEditMode={isEditMode}
+                  onChange={(s) => updateContract(type, "status", s)}
+                />
+              </div>
+              <QuoteFrame frameStyle={contractsData[type].frameStyle}>
+                <ContractCard
+                  title={cardInfo[type].title}
+                  subtitle={cardInfo[type].subtitle}
+                  price={contractsData[type].price}
+                  icon={cardInfo[type].icon}
+                  onClick={() => setSelectedContract(type)}
+                  delay={0.1 * (index + 1)}
+                  logo={branding.logo}
+                  companyName={branding.companyName}
+                  primaryColor={branding.primaryColor}
+                  secondaryColor={branding.secondaryColor}
+                />
+              </QuoteFrame>
+            </div>
           ))}
         </div>
         
@@ -210,6 +235,17 @@ const Index = () => {
         onApply={(settings) => {
           updateBranding({ ...branding, ...settings });
         }}
+      />
+
+      {/* Compare Quotes Modal */}
+      <CompareQuotes
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        quotes={[
+          { key: "addition", label: cardInfo.addition.title, data: contractsData.addition },
+          { key: "expansion", label: cardInfo.expansion.title, data: contractsData.expansion },
+          { key: "licensing", label: cardInfo.licensing.title, data: contractsData.licensing },
+        ]}
       />
     </div>
   );

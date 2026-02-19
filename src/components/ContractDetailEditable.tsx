@@ -6,7 +6,9 @@ import LogoDisplay from "./LogoDisplay";
 import ShareActions from "./ShareActions";
 import ClientInfoBar from "./ClientInfoBar";
 import ProjectGallery from "./ProjectGallery";
-import { ContractData } from "@/hooks/useContractsData";
+import StatusBadge from "./StatusBadge";
+import { frameStyles } from "./QuoteFrame";
+import { ContractData, QuoteStatus } from "@/hooks/useContractsData";
 
 interface ContractDetailEditableProps {
   isOpen: boolean;
@@ -113,6 +115,11 @@ const ContractDetailEditable = ({
                 >
                   <X className="w-5 h-5" />
                 </button>
+                <StatusBadge
+                  status={contract.status}
+                  isEditMode={isEditMode}
+                  onChange={(s) => onUpdateField("status" as keyof ContractData, s)}
+                />
               </div>
               <div className="mt-4 flex items-baseline gap-2" dir="rtl">
                 <span className="text-3xl font-bold">
@@ -296,6 +303,24 @@ const ContractDetailEditable = ({
             
             {/* Footer */}
             <div className="sticky bottom-0 bg-background border-t border-border p-4 print:hidden" dir="rtl">
+              {isEditMode && (
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <span className="text-xs text-muted-foreground">מסגרת:</span>
+                  {Object.entries(frameStyles).map(([key, style]) => (
+                    <button
+                      key={key}
+                      onClick={() => onUpdateField("frameStyle" as keyof ContractData, key)}
+                      className={`text-xs px-2 py-1 rounded-md border transition-colors ${
+                        contract.frameStyle === key
+                          ? "bg-gold text-white border-gold"
+                          : "border-border text-muted-foreground hover:border-gold"
+                      }`}
+                    >
+                      {style.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="text-sm text-muted-foreground">

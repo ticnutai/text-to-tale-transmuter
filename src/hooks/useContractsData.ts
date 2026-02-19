@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+export type QuoteStatus = "draft" | "sent" | "approved" | "rejected";
+
 export interface Section {
   title: string;
   items: string[];
@@ -19,6 +21,8 @@ export interface ContractData {
   quoteNumber: string;
   quoteDate: string;
   projectImages: string[];
+  status: QuoteStatus;
+  frameStyle: string;
   sections: Section[];
   payments: PaymentStep[];
   timeline?: string[];
@@ -41,6 +45,8 @@ const initialContractsData: ContractsData = {
     quoteNumber: "QT-001",
     quoteDate: new Date().toLocaleDateString("he-IL"),
     projectImages: [],
+    status: "draft" as QuoteStatus,
+    frameStyle: "none",
     sections: [
       {
         title: "שלב ראשון - בדיקת היתכנות ותכנון",
@@ -116,6 +122,8 @@ const initialContractsData: ContractsData = {
     quoteNumber: "QT-002",
     quoteDate: new Date().toLocaleDateString("he-IL"),
     projectImages: [],
+    status: "draft" as QuoteStatus,
+    frameStyle: "none",
     sections: [
       {
         title: "שלב ראשון - בדיקת היתכנות ותכנון",
@@ -190,6 +198,8 @@ const initialContractsData: ContractsData = {
     quoteNumber: "QT-003",
     quoteDate: new Date().toLocaleDateString("he-IL"),
     projectImages: [],
+    status: "draft" as QuoteStatus,
+    frameStyle: "none",
     sections: [
       {
         title: "שלב ראשון - רישוי",
