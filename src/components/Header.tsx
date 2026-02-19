@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { Phone, Mail, Building2 } from "lucide-react";
+import { Phone, Mail, Building2, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 const Header = () => {
+  const { isDark, toggleTheme } = useTheme();
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -40,6 +42,16 @@ const Header = () => {
           
           {/* Contact Info */}
           <div className="flex flex-col sm:flex-row items-center gap-4">
+            <motion.button
+              onClick={toggleTheme}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35 }}
+              className="p-3 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors"
+              title={isDark ? "מצב בהיר" : "מצב כהה"}
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </motion.button>
             <motion.a
               href="tel:054-666-7803"
               initial={{ opacity: 0, x: 20 }}

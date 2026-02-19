@@ -280,6 +280,62 @@ export const useContractsData = () => {
     }));
   };
 
+  const addSectionItem = (
+    contractType: keyof ContractsData,
+    sectionIndex: number,
+    value: string
+  ) => {
+    setContractsData((prev) => {
+      const newSections = [...prev[contractType].sections];
+      newSections[sectionIndex] = {
+        ...newSections[sectionIndex],
+        items: [...newSections[sectionIndex].items, value],
+      };
+      return {
+        ...prev,
+        [contractType]: { ...prev[contractType], sections: newSections },
+      };
+    });
+  };
+
+  const removeSectionItem = (
+    contractType: keyof ContractsData,
+    sectionIndex: number,
+    itemIndex: number
+  ) => {
+    setContractsData((prev) => {
+      const newSections = [...prev[contractType].sections];
+      newSections[sectionIndex] = {
+        ...newSections[sectionIndex],
+        items: newSections[sectionIndex].items.filter((_, i) => i !== itemIndex),
+      };
+      return {
+        ...prev,
+        [contractType]: { ...prev[contractType], sections: newSections },
+      };
+    });
+  };
+
+  const addNote = (contractType: keyof ContractsData, value: string) => {
+    setContractsData((prev) => ({
+      ...prev,
+      [contractType]: {
+        ...prev[contractType],
+        notes: [...prev[contractType].notes, value],
+      },
+    }));
+  };
+
+  const removeNote = (contractType: keyof ContractsData, noteIndex: number) => {
+    setContractsData((prev) => ({
+      ...prev,
+      [contractType]: {
+        ...prev[contractType],
+        notes: prev[contractType].notes.filter((_, i) => i !== noteIndex),
+      },
+    }));
+  };
+
   return {
     contractsData,
     isEditMode,
@@ -287,5 +343,9 @@ export const useContractsData = () => {
     updateContract,
     updateSectionItem,
     updateNote,
+    addSectionItem,
+    removeSectionItem,
+    addNote,
+    removeNote,
   };
 };
