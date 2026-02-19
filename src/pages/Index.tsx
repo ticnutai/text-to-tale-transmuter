@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, PencilOff, Palette } from "lucide-react";
+import { Pencil, PencilOff, Palette, Layout } from "lucide-react";
 import Header from "@/components/Header";
 import ContractCard from "@/components/ContractCard";
 import ContractDetailEditable from "@/components/ContractDetailEditable";
 import BrandingCustomizer from "@/components/BrandingCustomizer";
+import TemplateSelector from "@/components/TemplateSelector";
 import { useContractsData, ContractData } from "@/hooks/useContractsData";
-import { useBranding } from "@/hooks/useBranding";
+import { useBranding, BrandingSettings } from "@/hooks/useBranding";
 import { Button } from "@/components/ui/button";
 
 type ContractType = "addition" | "expansion" | "licensing" | null;
@@ -32,6 +33,7 @@ const cardInfo = {
 const Index = () => {
   const [selectedContract, setSelectedContract] = useState<ContractType>(null);
   const [isBrandingOpen, setIsBrandingOpen] = useState(false);
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
   const {
     contractsData,
     isEditMode,
@@ -52,6 +54,15 @@ const Index = () => {
       
       {/* Edit Mode Toggle */}
       <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2">
+        <Button
+          onClick={() => setIsTemplatesOpen(true)}
+          variant="outline"
+          size="lg"
+          className="shadow-lg gap-2"
+        >
+          <Layout className="w-4 h-4" />
+          תבניות
+        </Button>
         <Button
           onClick={() => setIsBrandingOpen(true)}
           variant="outline"
@@ -190,6 +201,15 @@ const Index = () => {
         onClose={() => setIsBrandingOpen(false)}
         settings={branding}
         onSave={updateBranding}
+      />
+
+      {/* Template Selector Modal */}
+      <TemplateSelector
+        isOpen={isTemplatesOpen}
+        onClose={() => setIsTemplatesOpen(false)}
+        onApply={(settings) => {
+          updateBranding({ ...branding, ...settings });
+        }}
       />
     </div>
   );
